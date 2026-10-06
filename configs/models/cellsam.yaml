@@ -1,0 +1,44 @@
+name: cellsam
+description: "CellSAM — SAM ViT-B + CellFinder (AnchorDETR) foundation model (Marks et al., Nature Methods 2025)"
+
+# Input: generalist model, receives 1-channel (H&E -> Hematoxylin channel).
+# Channel adaptation: CellSAM's format_image_shape() ZERO-PADS the channel into
+# the last of 3 channels (R=G=0) — the layout its released weights were trained
+# with. Do NOT pre-replicate.
+variant: cellsam
+
+# "cellsam_general" reproduces paper results; "cellsam_extra" covers broader domains.
+model_variant: cellsam_general
+
+# When null, weights auto-download to ~/.deepcell/models/cellsam_v1.2/cellsam_general.pt
+# (requires a DEEPCELL_ACCESS_TOKEN env var on first download: https://users.deepcell.org).
+# Override with env var: CELLSAM_CHECKPOINT
+checkpoint_path: null
+
+# Path to the cellSAM-master source directory (no pip package; install with
+# pip install -e third_party/cellSAM-master/). Set to your own install
+# location below, or override with env var: CELLSAM_ROOT
+cellsam_root: null
+
+# Confidence threshold for CellFinder bounding box predictions, range [0, 1].
+# Paper default is 0.4; use 0.15-0.3 for out-of-distribution/low-contrast images.
+bbox_threshold: 0.4
+
+notes: |
+  CellSAM is inference-only in this benchmark; the source exposes no public
+  fine-tuning API.
+
+  CellSAM is a generalist (needs_raw_he_image=False): it receives a 1-channel
+  image for every modality, so H&E arrives as the stain-separated Hematoxylin
+  channel, not raw RGB. CellSAM's own format_image_shape() zero-pads that
+  channel into the last of three channels (R=G=0) — the layout its released
+  weights were trained with. See channel-adaptation note above; do not
+  pre-replicate.
+
+compatible_datasets:
+  - DAPI
+  - mIF
+  - ssDNA
+  - 10xGenomics_DAPI
+  - HE
+  - 10xGenomics_HE

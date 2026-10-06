@@ -1,0 +1,44 @@
+# MicroSAM ViT-T LM — tiny light-microscopy generalist, AIS-ready
+#
+# The vit_t_lm checkpoint is fine-tuned on a broad set of light-microscopy
+# images and ships with a pretrained UNETR decoder. Uses the MobileSAM ViT-T
+# encoder (~5.7M params) — fastest and most energy-efficient of the LM variants.
+# Requires: pip install mobile-sam  (in addition to micro-sam)
+#
+# Checkpoints downloaded automatically to ~/.cache/micro_sam/models/
+# Paper: Archit et al., Nature Methods 2024
+
+name: microsam_vit_t_lm
+variant: microsam_vit_t_lm
+model_type: vit_t_lm
+
+# Input: fluorescence-only model, receives 1-channel grayscale.
+# Channel adaptation: SAM takes 3ch -> _to_uint8_rgb() REPLICATES the channel 3x,
+# matching micro_sam's own util.py::_to_image.
+num_channels: 1
+
+# Optional paths (null = auto-download)
+checkpoint_path: null
+decoder_path: null
+
+# AIS inference thresholds (from micro_sam/_model_settings.py AIS_SETTINGS, vit_t_lm entry)
+center_distance_threshold: 0.5
+boundary_distance_threshold: 0.5
+foreground_threshold: 0.5
+foreground_smoothing: 1.0
+distance_smoothing: 2.0
+
+# AdamW (lr=1e-5, wd=1e-2) per micro_sam/training/training.py line 208.
+# ReduceLROnPlateau scheduler runs but won't fire without a val signal (LR fixed).
+# Encoder frozen (requires_grad=False); prompt encoder + mask decoder + UNETR
+# decoder remain trainable.
+fewshot_finetuning:
+  n_epochs: 10
+  learning_rate: 1.0e-5
+  weight_decay: 1.0e-2
+
+compatible_datasets:
+  - DAPI
+  - mIF
+  - ssDNA
+  - 10xGenomics_DAPI

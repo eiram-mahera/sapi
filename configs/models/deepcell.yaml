@@ -1,0 +1,24 @@
+name: deepcell
+description: "DeepCell NuclearSegmentation (PanopticNet, Van Valen Lab)"
+
+# Input: generalist model, receives 1-channel (H&E -> Hematoxylin channel).
+# Channel adaptation: NuclearSegmentation is a 1-channel nuclear model -> passed through unchanged.
+variant: deepcell
+
+# Model version: "1.1" (July 2024) or "1.0" (September 2023).
+# Weights are downloaded automatically to ~/.deepcell/models/
+model_version: "1.1"
+
+# CellBinDB's paper does not state a physical pixel size for its images, so no
+# rescaling is applied (image_mpp=null); images are processed at native resolution.
+image_mpp: null
+
+# DeepCell is inference-only in this benchmark (no fine-tuning support).
+
+compatible_datasets:
+  - DAPI
+  - mIF
+  - ssDNA
+  - 10xGenomics_DAPI
+  - HE
+  - 10xGenomics_HE

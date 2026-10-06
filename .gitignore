@@ -1,0 +1,19 @@
+# API tokens / credentials
+configs/electricity_maps.json
+configs/deepcell.json
+
+# Third-party model source (download separately, see README)
+third_party/
+
+# Datasets
+data/
+
+# Experiment outputs and logs
+/results/
+/results_zero_shot/
+/logs/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/

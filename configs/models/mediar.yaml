@@ -1,0 +1,48 @@
+name: mediar
+description: >
+  MEDIAR – MEDIARFormer with MiT-B5 encoder (NeurIPS 2022 Cell Seg Challenge winner).
+  Predicts gradient flow fields + cell probability; post-processes with Cellpose
+  flow-tracking (compute_masks). Pretrained on diverse cell segmentation datasets.
+
+# Input: generalist model, receives 1-channel (H&E -> Hematoxylin channel).
+# Channel adaptation: MEDIARFormer is in_channels=3 -> _to_3ch_tensor() REPLICATES
+# the channel 3x, matching MEDIAR's own LoadImage.py reader.
+variant: mediar
+
+notes: |
+  Source code setup:
+    Set mediar_root below (or MEDIAR_ROOT env var) to the MEDIAR source directory —
+    the folder containing train_tools/ and core/ subdirectories.
+    pip install segmentation-models-pytorch monai fastremap timm
+
+  Pretrained weights (from_phase2.pth):
+    Download from: https://github.com/Lee-Gihun/MEDIAR (Releases section)
+    Set weights_path below, or set MEDIAR_WEIGHTS env var.
+
+# Path to MEDIAR source directory (folder containing train_tools/ and core/).
+# Set to your own install location below, or override with env var: MEDIAR_ROOT
+mediar_root: null
+
+# Path to pretrained weights (.pth file). Set to your own downloaded weights
+# below, or override with env var: MEDIAR_WEIGHTS
+# from_phase2.pth = fully fine-tuned model (NeurIPS 2022 challenge winner, used
+# for both inference and fine-tuning initialization). phase2.pth is an
+# intermediate pretraining checkpoint only — NOT suitable for standalone inference.
+weights_path: null
+
+# AdamW, CosineAnnealingLR(T_max=n_epochs, eta_min=1e-7). LR=2e-5 per Lee et al.
+# (NeurIPS 2022 Cell Seg Challenge) official fine-tuning config:
+# config/step2_finetuning/finetuning2.json (WD not specified there; PyTorch
+# AdamW default 1e-2 used).
+fewshot_finetuning:
+  n_epochs: 10
+  learning_rate: 2.0e-5
+  weight_decay: 1.0e-2
+
+compatible_datasets:
+  - DAPI
+  - mIF
+  - ssDNA
+  - 10xGenomics_DAPI
+  - HE
+  - 10xGenomics_HE

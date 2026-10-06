@@ -1,0 +1,22 @@
+name: cellpose_cyto2
+description: "Cellpose cyto2 pretrained model – classic fluorescence cell segmentation"
+
+# Input: generalist model, receives 1-channel (H&E -> Hematoxylin channel).
+# Channel adaptation: called with channels=[0,0] (grayscale) -> passed through unchanged.
+variant: cellpose_cyto2
+diameter: null
+num_channels: 1
+
+# AdamW, LR=5e-3, WD=1e-4, same architecture/LR as cyto3.
+fewshot_finetuning:
+  n_epochs: 10
+  learning_rate: 5.0e-3
+  weight_decay: 1.0e-4
+
+compatible_datasets:
+  - DAPI
+  - mIF
+  - ssDNA
+  - 10xGenomics_DAPI
+  - HE
+  - 10xGenomics_HE

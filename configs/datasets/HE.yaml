@@ -1,0 +1,21 @@
+name: HE
+description: "H&E stained histopathology images – 512×512 RGB"
+num_channels_raw: 3           # channels on disk (RGB)
+num_channels_preprocessed: 1  # channels after stain separation
+image_dtype: uint8
+image_size: [512, 512]
+num_samples: 305
+modality: brightfield
+staining: HE
+
+preprocessing: stain_separate  # Layer-A mode; see sapi/datasets/cellbindb.py
+min_size: 1                    # px; models drop smaller predicted instances (run_experiment.py)
+pixel_size_um: null             # not stated in source
+
+recommended_models:
+  - cellpose_cyto3
+  - cellpose_sam
+  - stardist_he
+  - mesmer
+  - cellvit_256
+  - cellvit_sam_h

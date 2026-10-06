@@ -1,0 +1,55 @@
+name: hovernet
+description: >
+  HoverNet – H&E cell instance segmentation using ResNet50 encoder with NP
+  (nucleus probability) and HV (horizontal-vertical gradient) decoder branches.
+  Original mode: 270×270 input → 80×80 output patches, step=80.
+
+# Input: H&E-only model, receives raw RGB H&E.
+# Channel adaptation: HoVerNet is input_ch=3 -> RGB passed through unchanged (_to_hw3).
+variant: hovernet
+
+notes: |
+  Source code setup:
+    Set hovernet_root below (or HOVERNET_ROOT env var) to the hover_net source
+    directory — the folder containing models/ and post_proc.py.
+    pip install opencv-python scipy scikit-image scikit-learn
+
+  Pretrained weights:
+    Download from: https://github.com/vqdang/hover_net (Model Weights section)
+    Use: hovernet_original_kumar_notype_pytorch.tar (native PyTorch, no-type mode)
+    Set weights_path below, or set HOVERNET_WEIGHTS env var.
+
+  Input: raw RGB images normalised to [0,1] float32 (needs_raw_he_image=True;
+  no stain separation). Internally scaled to [0,255] before the forward pass
+  because HoverNet divides by 255 internally. Images are processed at their
+  original resolution and size (no rescaling).
+
+  Fine-tuning modes: fewshot_finetuning runs both automatically, one after the
+  other, from this single config (no CLI flag selects between them): encoder
+  frozen (branch decoders only), then the entire model fine-tuned.
+  LR schedule: StepLR step_size=25 gamma=0.1 (1e-4 → 1e-5 at epoch 25).
+
+# Path to the hover_net source directory (folder containing models/ and
+# post_proc.py). Set to your own install location below, or override with
+# env var: HOVERNET_ROOT
+hovernet_root: null
+
+# Path to pretrained weights (.tar file). Set to your own downloaded weights
+# below, or override with env var: HOVERNET_WEIGHTS
+# WARNING: ImageNet-ResNet50-Preact_pytorch.tar is the ImageNet backbone for
+# training initialisation — NOT a trained HoverNet model. For zero-shot
+# inference use hovernet_original_kumar_notype_pytorch.tar from the hover_net
+# GitHub releases.
+weights_path: null
+
+# Adam (betas=(0.9,0.999)), WD=0. LR=1e-4 per hover_net-master/models/hovernet/opt.py.
+# StepLR(step_size=25, gamma=0.1) decays 1e-4→1e-5 at epoch 25; fewshot_finetuning's
+# 10-epoch budget stays entirely within the initial LR regime.
+fewshot_finetuning:
+  n_epochs: 10
+  learning_rate: 1.0e-4
+  weight_decay: 0.0
+
+compatible_datasets:
+  - HE
+  - 10xGenomics_HE

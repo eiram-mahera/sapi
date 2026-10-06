@@ -1,0 +1,14 @@
+# Core dependencies of the sapi framework (data loading, metrics, energy
+# profiling, logging). Install these into every model environment; the model
+# packages themselves are set up per environment (see README.md).
+
+# numpy<2.0 keeps the TensorFlow-based model environments ABI-compatible
+numpy>=1.23,<2.0
+scipy>=1.10
+scikit-image>=0.20
+tifffile>=2023.0
+imagecodecs            # compressed TIFF support for tifffile
+PyYAML>=6.0
+surface-distance>=0.1  # NSD metric
+psutil>=5.9
+nvidia-ml-py>=12.0     # provides `import pynvml`

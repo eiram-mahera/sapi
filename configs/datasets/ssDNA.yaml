@@ -1,0 +1,19 @@
+name: ssDNA
+description: "Single-stranded DNA staining – 256×256 grayscale (mixed uint8/uint16 on disk)"
+num_channels: 1
+image_dtype: uint16
+image_size: [256, 256]
+num_samples: 276
+modality: fluorescence
+staining: ssDNA
+
+preprocessing: none   # Layer-A mode; see sapi/datasets/cellbindb.py
+min_size: 1           # px; models drop smaller predicted instances (run_experiment.py)
+pixel_size_um: null   # not stated in source
+
+recommended_models:
+  - cellpose_cyto2
+  - cellpose_cyto3
+  - cellpose_sam
+  - stardist_fluo
+  - mesmer

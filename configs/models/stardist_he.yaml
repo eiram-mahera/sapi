@@ -1,0 +1,27 @@
+name: stardist_he
+description: >
+  StarDist 2D_versatile_he – optimised for H&E histopathology.
+  Note: HE images are preprocessed to a single Haematoxylin channel via stain
+  separation. The model wrapper replicates this channel to 3 channels before
+  passing to StarDist, so the model sees a valid 3-channel input.
+
+# Input: H&E-only model, receives raw RGB H&E.
+# Channel adaptation: 2D_versatile_he is n_channel_in=3 -> RGB passed through unchanged.
+variant: stardist_he
+pretrained_name: "2D_versatile_he"
+num_channels_expected: 3
+n_rays: 32
+grid: [2, 2]
+pretrained_framework: tensorflow
+
+# Keras Adam, LR=3e-4 (weight_decay unsupported by Keras Adam), per
+# stardist/models/model2d.py line 247 (self.train_learning_rate = 0.0003),
+# the same default used by both 2D_versatile_fluo and 2D_versatile_he.
+fewshot_finetuning:
+  n_epochs: 10
+  learning_rate: 3.0e-4
+  weight_decay: 0.0
+
+compatible_datasets:
+  - HE
+  - 10xGenomics_HE

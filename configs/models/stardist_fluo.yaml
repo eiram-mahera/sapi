@@ -1,0 +1,24 @@
+name: stardist_fluo
+description: "StarDist 2D_versatile_fluo – optimised for fluorescence microscopy"
+
+# Input: fluorescence-only model, receives 1-channel grayscale.
+# Channel adaptation: 2D_versatile_fluo is n_channel_in=1 -> passed through unchanged.
+variant: stardist_fluo
+pretrained_name: "2D_versatile_fluo"
+num_channels: 1
+n_rays: 32
+grid: [2, 2]
+
+# Keras Adam, LR=3e-4 (weight_decay unsupported by Keras Adam), per StarDist's
+# official config stardist-main/models/paper/2D_dsb2018/config.json.
+# Encoder frozen -> only the prediction head (distance transform + rays) adapts.
+fewshot_finetuning:
+  n_epochs: 10
+  learning_rate: 3.0e-4
+  weight_decay: 0.0
+
+compatible_datasets:
+  - DAPI
+  - mIF
+  - ssDNA
+  - 10xGenomics_DAPI

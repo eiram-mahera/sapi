@@ -1,0 +1,22 @@
+name: cellpose_cyto3
+description: "Cellpose cyto3 pretrained model – improved generalisation over cyto2"
+
+# Input: generalist model, receives 1-channel (H&E -> Hematoxylin channel).
+# Channel adaptation: called with channels=[0,0] (grayscale) -> passed through unchanged.
+variant: cellpose_cyto3
+diameter: null
+num_channels: 1
+
+# AdamW, WD=1e-4. LR=5e-3 per Pachitariu et al. "Cellpose3"/CellposeSAM (2025) p.9.
+fewshot_finetuning:
+  n_epochs: 10
+  learning_rate: 5.0e-3
+  weight_decay: 1.0e-4
+
+compatible_datasets:
+  - DAPI
+  - mIF
+  - ssDNA
+  - 10xGenomics_DAPI
+  - HE
+  - 10xGenomics_HE

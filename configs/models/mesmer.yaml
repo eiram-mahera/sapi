@@ -1,0 +1,24 @@
+name: mesmer
+description: "DeepCell Mesmer – nuclear segmentation via two-channel CNN"
+notes: "Requires: pip install deepcell"
+
+# Input: generalist model, receives 1-channel (H&E -> Hematoxylin channel).
+# Channel adaptation: Mesmer takes a 1-channel nuclear input -> passed through unchanged.
+compartment: nuclear        # 'nuclear' or 'whole-cell'
+
+# CellBinDB's paper does not state a physical pixel size for its images, so no
+# rescaling is applied (image_mpp=null); images are processed at native resolution.
+image_mpp: null
+
+# Mesmer does not expose a public fine-tuning API; supervised training would
+# require the full DeepCell training pipeline.
+supports_train: false
+supports_finetune: false
+
+compatible_datasets:
+  - DAPI
+  - mIF
+  - ssDNA
+  - 10xGenomics_DAPI
+  - HE
+  - 10xGenomics_HE

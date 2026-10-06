@@ -1,0 +1,49 @@
+name: instanseg
+description: "InstanSeg — embedding-based instance segmentation (Goldsborough et al. 2024, arXiv:2408.15954)"
+
+# Input: generalist model, receives a 1-channel float32 image for all modalities
+# (fluorescence: dataset.image directly; H&E: stain-separated Hematoxylin channel).
+# Channel adaptation: single_channel_nuclei is in_channels=1 -> passed through unchanged.
+variant: instanseg
+num_channels: 1   # single_channel_nuclei: 1-channel for all modalities
+in_channels: 1    # single_channel_nuclei checkpoint: 1-channel UNet input
+
+# Checkpoint: single_channel_nuclei/instanseg.pt (BioImage Model Zoo), a
+# TorchScript scripted InstanSeg_Torchscript module. Path priority: YAML ->
+# INSTANSEG_CHECKPOINT env var -> default. Set to your own downloaded
+# checkpoint location below.
+checkpoint_path: null
+
+# Architecture (state-dict fallback only): used only when loading a raw .pth
+# training checkpoint instead of the TorchScript .pt — for TorchScript,
+# architecture is embedded in the script and these are ignored. The wrapper
+# auto-detects cells_and_nuclei, multihead, and mlp_width from checkpoint keys.
+model_str: InstanSeg_UNet
+n_sigma: 2
+dim_coords: 2
+dim_seeds: 1
+cells_and_nuclei: false    # single_channel_nuclei checkpoint: nuclei only
+feature_engineering: "0"   # feature engineering variant used during training
+mlp_width: 5               # auto-inferred from fc1.weight.shape[0]; set for reference
+
+# CellBinDB's paper does not state a physical pixel size for its images, so no
+# rescaling is applied (pixel_size=null); images are processed at native resolution.
+pixel_size: null
+
+# Fine-tuning from a pretrained checkpoint: hotstart_epochs=0 (lovasz_hinge from
+# epoch 1 — the authors' dice-hotstart phase is for training from scratch, not
+# needed with already-structured pretrained embeddings).
+# Adam (lr=1e-3, wd=0.0, grad_clip=20), no LR scheduler — train.py defaults.
+fewshot_finetuning:
+  n_epochs: 10
+  learning_rate: 1.0e-3
+  weight_decay: 0.0
+  hotstart_epochs: 0
+
+compatible_datasets:
+  - DAPI
+  - mIF
+  - ssDNA
+  - 10xGenomics_DAPI
+  - HE
+  - 10xGenomics_HE

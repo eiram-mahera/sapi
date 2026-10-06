@@ -1,0 +1,38 @@
+# PathoSAM ViT-B Histopathology — generalist H&E nucleus segmentation
+#
+# PathoSAM (Griebel, Archit & Pape, MIDL 2025) is SAM fine-tuned on six diverse
+# H&E histopathology datasets. The vit_b_histopathology checkpoint bundles a
+# pretrained UNETR decoder for Automatic Instance Segmentation (AIS).
+# H&E-only: trained exclusively on H&E-stained tissue images.
+# Checkpoint auto-downloaded to ~/.cache/micro_sam/models/ via micro_sam.
+# Paper: Griebel, Archit & Pape, arXiv:2502.00408 (MIDL 2025)
+
+name: pathosamvit_b
+variant: pathosamvit_b
+model_type: vit_b_histopathology
+
+# Input: H&E-only model, receives raw RGB H&E.
+# Channel adaptation: SAM takes 3ch -> _to_uint8_rgb() casts the RGB directly.
+num_channels: 1  # single-channel; wrapper converts to RGB internally
+
+# Optional paths (null = auto-download via micro_sam model hub)
+checkpoint_path: null
+decoder_path: null
+
+# AIS inference thresholds tuned for H&E nuclei
+center_distance_threshold: 0.5
+boundary_distance_threshold: 0.4
+foreground_threshold: 0.5
+foreground_smoothing: 1.0
+distance_smoothing: 1.6
+
+# AdamW (lr=1e-5) per micro_sam/training/training.py API defaults.
+# Encoder frozen; prompt encoder + mask decoder + UNETR decoder remain trainable.
+fewshot_finetuning:
+  n_epochs: 10
+  learning_rate: 1.0e-5
+  weight_decay: 1.0e-2
+
+compatible_datasets:
+  - HE
+  - 10xGenomics_HE

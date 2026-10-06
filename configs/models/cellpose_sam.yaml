@@ -1,0 +1,29 @@
+name: cellpose_sam
+description: "CellposeSAM (Cellpose 4.0) — ViT-L/SAM backbone, pretrained model 'cpsam'"
+
+# Input: generalist model, receives 1-channel (H&E -> Hematoxylin channel).
+# Channel adaptation: Cellpose 4.x auto-detects channels -> passed through unchanged.
+variant: cellpose_sam
+
+# Cellpose 4.0 does not expose diameter as a meaningful tunable; null = auto-estimate.
+diameter: null
+
+# AdamW, WD=0.1. LR=1e-5 per CellposeSAM paper (Pachitariu et al. 2025) p.8,
+# appropriate for decoder-only fine-tuning with the encoder frozen.
+fewshot_finetuning:
+  n_epochs: 10
+  learning_rate: 1.0e-5
+  weight_decay: 0.1
+  # Gradient accumulation micro-batch size. Fine-tuning is fp32 (matches the
+  # Cellpose 4.x reference), so full_model ViT-L at batch 8 OOMs on a 32 GB V100.
+  # Splitting into micro-batches of 4 caps peak activation memory while
+  # producing a mathematically identical batch-8 update.
+  grad_accum_micro_batch: 4
+
+compatible_datasets:
+  - DAPI
+  - mIF
+  - ssDNA
+  - 10xGenomics_DAPI
+  - HE
+  - 10xGenomics_HE

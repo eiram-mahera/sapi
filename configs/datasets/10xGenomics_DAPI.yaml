@@ -1,0 +1,19 @@
+name: 10xGenomics_DAPI
+description: "10x Genomics Visium DAPI images – 256×256 grayscale (mixed uint8/uint16 on disk)"
+num_channels: 1
+image_dtype: uint16
+image_size: [256, 256]
+num_samples: 100
+modality: fluorescence
+staining: DAPI
+platform: "10x Genomics Visium"
+
+preprocessing: none   # Layer-A mode; see sapi/datasets/cellbindb.py
+min_size: 1           # px; models drop smaller predicted instances (run_experiment.py)
+pixel_size_um: null   # not stated in source
+
+recommended_models:
+  - cellpose_cyto2
+  - cellpose_cyto3
+  - stardist_fluo
+  - mesmer
