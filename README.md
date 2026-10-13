@@ -3,8 +3,7 @@
 > **This repository is the official implementation of the experiments and
 > results reported in the paper:**
 >
-> **[Performance at What Cost? A Sustainability-Aware Performance Index for Cell and Nucleus Instance Segmentation](ARXIV_URL)**
-> (preprint on arXiv)
+> **[Performance at What Cost? A Sustainability-Aware Performance Index for Cell and Nucleus Instance Segmentation](https://arxiv.org/pdf/2610.10324)**
 
 `sapi` benchmarks cell / nucleus instance segmentation models on **accuracy and
 sustainability**. It runs 19 pretrained model variants on the six datasets of
